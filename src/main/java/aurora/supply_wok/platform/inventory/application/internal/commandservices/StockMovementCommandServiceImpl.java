@@ -22,7 +22,9 @@ public class StockMovementCommandServiceImpl implements StockMovementCommandServ
 
     @Override
     public Optional<StockMovement> handle(CreateStockMovementCommand command) {
-        var supply = supplyRepository.findById(command.supplyId());
+        var supply = command.restaurantId() != null
+                ? supplyRepository.findByIdAndRestaurantId(command.supplyId(), command.restaurantId())
+                : supplyRepository.findById(command.supplyId());
         if (supply.isEmpty()) {
             return Optional.empty();
         }

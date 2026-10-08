@@ -24,7 +24,8 @@ public class SupplyMinimumStockReachedEventHandler {
                 event.supplyId(),
                 event.name(),
                 event.currentStock(),
-                event.minimumStockLevel()
+                event.minimumStockLevel(),
+                event.restaurantId()
         ));
     }
 }

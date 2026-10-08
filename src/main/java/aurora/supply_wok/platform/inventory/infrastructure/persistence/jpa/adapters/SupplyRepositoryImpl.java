@@ -41,8 +41,22 @@ public class SupplyRepositoryImpl implements SupplyRepository {
     }
 
     @Override
+    public List<Supply> findAllByRestaurantId(Long restaurantId) {
+        return supplyPersistenceRepository.findAllByRestaurantIdOrderByIdAsc(restaurantId)
+                .stream()
+                .map(SupplyPersistenceAssembler::toDomainFromPersistence)
+                .toList();
+    }
+
+    @Override
     public Optional<Supply> findById(Long id) {
         return supplyPersistenceRepository.findById(id)
+                .map(SupplyPersistenceAssembler::toDomainFromPersistence);
+    }
+
+    @Override
+    public Optional<Supply> findByIdAndRestaurantId(Long id, Long restaurantId) {
+        return supplyPersistenceRepository.findByIdAndRestaurantId(id, restaurantId)
                 .map(SupplyPersistenceAssembler::toDomainFromPersistence);
     }
 
@@ -55,6 +69,7 @@ public class SupplyRepositoryImpl implements SupplyRepository {
         } else {
             entityToSave = supplyPersistenceRepository.findById(supply.getId())
                     .orElseGet(() -> SupplyPersistenceAssembler.toPersistenceFromDomain(supply));
+            entityToSave.setRestaurantId(supply.getRestaurantId() != null ? supply.getRestaurantId() : entityToSave.getRestaurantId());
             entityToSave.setName(supply.getName());
             entityToSave.setUnitOfMeasure(supply.getUnitOfMeasure());
             entityToSave.setCurrentStock(supply.getCurrentStock());
@@ -84,6 +99,11 @@ public class SupplyRepositoryImpl implements SupplyRepository {
     @Override
     public long getTotalCurrentStock() {
         return supplyPersistenceRepository.sumCurrentStock();
+    }
+
+    @Override
+    public long getTotalCurrentStockByRestaurantId(Long restaurantId) {
+        return supplyPersistenceRepository.sumCurrentStockByRestaurantId(restaurantId);
     }
 
     @Override

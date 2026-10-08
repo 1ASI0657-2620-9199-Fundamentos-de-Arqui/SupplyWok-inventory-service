@@ -1,10 +1,15 @@
 package aurora.supply_wok.platform.shared.interfaces.rest;
 
 import aurora.supply_wok.platform.shared.application.result.ApplicationError;
+import aurora.supply_wok.platform.shared.domain.exceptions.ResourceNotFoundException;
+import aurora.supply_wok.platform.shared.domain.exceptions.UnauthorizedException;
+import aurora.supply_wok.platform.shared.interfaces.rest.resources.ErrorResource;
 import aurora.supply_wok.platform.shared.interfaces.rest.transform.ErrorResponseAssembler;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,6 +28,36 @@ import java.util.ResourceBundle;
 @NullMarked
 public class GlobalExceptionHandler {
     private static final String MESSAGES_BASENAME = "messages";
+
+    /**
+     * Handles access denied exceptions thrown when caller lacks required authority.
+     * Maps to HTTP 403 FORBIDDEN status.
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResource> handleAccessDenied(AccessDeniedException ex) {
+        var error = new ErrorResource("ACCESS_DENIED", "Access denied", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * Handles resource not found exceptions (including cross-tenant accesses).
+     * Maps to HTTP 404 NOT_FOUND status.
+     */
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleResourceNotFound(ResourceNotFoundException ex) {
+        var applicationError = ApplicationError.notFound("Supply", ex.getMessage());
+        return ErrorResponseAssembler.toErrorResponseFromApplicationError(applicationError);
+    }
+
+    /**
+     * Handles unauthorized exceptions thrown when authentication is absent or invalid.
+     * Maps to HTTP 401 UNAUTHORIZED status.
+     */
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResource> handleUnauthorized(UnauthorizedException ex) {
+        var error = new ErrorResource("UNAUTHORIZED", ex.getMessage(), null);
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
 
     /**
      * Handles validation exceptions from Spring's request body validation.

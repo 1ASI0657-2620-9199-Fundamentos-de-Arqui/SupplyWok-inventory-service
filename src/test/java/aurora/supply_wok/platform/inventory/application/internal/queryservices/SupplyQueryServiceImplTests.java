@@ -44,6 +44,20 @@ class SupplyQueryServiceImplTests {
     }
 
     @Test
+    void handleGetAllSuppliesQuery_whenRestaurantIdProvided_queriesByRestaurantId() {
+        // Arrange
+        var supply = new Supply(1L, "Carrot", EUnitOfMeasure.Kilograms, 10, 2, "Vegetables");
+        when(supplyRepository.findAllByRestaurantId(1L)).thenReturn(List.of(supply));
+
+        // Act
+        var result = supplyQueryService.handle(new GetAllSuppliesQuery(1L));
+
+        // Assert
+        assertThat(result).containsExactly(supply);
+        verify(supplyRepository).findAllByRestaurantId(1L);
+    }
+
+    @Test
     void handleGetSupplyByIdQuery_whenCalled_delegatesToRepository() {
         // Arrange
         var supply = new Supply("Broccoli", EUnitOfMeasure.Kilograms, 8, 2, "Vegetables");
@@ -60,6 +74,22 @@ class SupplyQueryServiceImplTests {
     }
 
     @Test
+    void handleGetSupplyByIdQuery_whenRestaurantIdProvided_queriesByIdAndRestaurantId() {
+        // Arrange
+        var supply = new Supply(1L, "Broccoli", EUnitOfMeasure.Kilograms, 8, 2, "Vegetables");
+        supply.setId(5L);
+        when(supplyRepository.findByIdAndRestaurantId(5L, 1L)).thenReturn(Optional.of(supply));
+
+        // Act
+        var result = supplyQueryService.handle(new GetSupplyByIdQuery(5L, 1L));
+
+        // Assert
+        assertThat(result).isPresent();
+        assertThat(result.get().getName()).isEqualTo("Broccoli");
+        verify(supplyRepository).findByIdAndRestaurantId(5L, 1L);
+    }
+
+    @Test
     void handleGetTotalSupplyStockQuery_whenCalled_returnsTotalStockFromRepository() {
         // Arrange
         when(supplyRepository.getTotalCurrentStock()).thenReturn(450L);
@@ -70,5 +100,18 @@ class SupplyQueryServiceImplTests {
         // Assert
         assertThat(result).isEqualTo(450L);
         verify(supplyRepository).getTotalCurrentStock();
+    }
+
+    @Test
+    void handleGetTotalSupplyStockQuery_whenRestaurantIdProvided_queriesByRestaurantId() {
+        // Arrange
+        when(supplyRepository.getTotalCurrentStockByRestaurantId(1L)).thenReturn(200L);
+
+        // Act
+        var result = supplyQueryService.handle(new GetTotalSupplyStockQuery(1L));
+
+        // Assert
+        assertThat(result).isEqualTo(200L);
+        verify(supplyRepository).getTotalCurrentStockByRestaurantId(1L);
     }
 }

@@ -61,6 +61,12 @@ public class JwtTokenValidator {
         if (userIdObject instanceof Number number) {
             return number.longValue();
         }
+        if (userIdObject instanceof String str && !str.isBlank()) {
+            try {
+                return Long.parseLong(str.trim());
+            } catch (NumberFormatException ignored) {
+            }
+        }
         return null;
     }
 }

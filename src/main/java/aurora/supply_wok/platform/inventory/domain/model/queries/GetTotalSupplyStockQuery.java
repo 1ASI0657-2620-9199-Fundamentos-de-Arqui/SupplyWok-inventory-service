@@ -1,7 +1,10 @@
 package aurora.supply_wok.platform.inventory.domain.model.queries;
 
 /**
- * Query to retrieve the total current stock across all supplies.
+ * Query to retrieve the total current stock across all supplies for a restaurant.
  */
-public record GetTotalSupplyStockQuery() {
+public record GetTotalSupplyStockQuery(Long restaurantId) {
+    public GetTotalSupplyStockQuery() {
+        this(null);
+    }
 }

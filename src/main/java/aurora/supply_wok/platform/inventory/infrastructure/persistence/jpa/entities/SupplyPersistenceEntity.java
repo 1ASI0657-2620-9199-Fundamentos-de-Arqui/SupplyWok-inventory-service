@@ -26,6 +26,9 @@ import java.util.List;
 @NoArgsConstructor
 public class SupplyPersistenceEntity extends AuditableAbstractPersistenceEntity {
 
+    @Column(name = "restaurant_id", nullable = false)
+    private Long restaurantId;
+
     @Column(nullable = false, length = 100)
     private String name;
 

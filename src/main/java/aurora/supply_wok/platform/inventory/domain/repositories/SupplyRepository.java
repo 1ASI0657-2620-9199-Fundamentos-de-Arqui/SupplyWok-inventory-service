@@ -13,13 +13,19 @@ public interface SupplyRepository {
 
     List<Supply> findAll();
 
+    List<Supply> findAllByRestaurantId(Long restaurantId);
+
     Optional<Supply> findById(Long id);
+
+    Optional<Supply> findByIdAndRestaurantId(Long id, Long restaurantId);
 
     Supply save(Supply supply);
 
     void delete(Supply supply);
 
     long getTotalCurrentStock();
+
+    long getTotalCurrentStockByRestaurantId(Long restaurantId);
 
     StockMovement saveStockMovement(StockMovement stockMovement);
 

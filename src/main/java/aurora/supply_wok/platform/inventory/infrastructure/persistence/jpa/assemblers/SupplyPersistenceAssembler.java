@@ -13,6 +13,7 @@ public final class SupplyPersistenceAssembler {
 
     public static Supply toDomainFromPersistence(SupplyPersistenceEntity entity) {
         var supply = new Supply(
+                entity.getRestaurantId(),
                 entity.getName(),
                 entity.getUnitOfMeasure(),
                 entity.getCurrentStock(),
@@ -26,6 +27,7 @@ public final class SupplyPersistenceAssembler {
     public static SupplyPersistenceEntity toPersistenceFromDomain(Supply supply) {
         var entity = new SupplyPersistenceEntity();
         entity.setId(supply.getId());
+        entity.setRestaurantId(supply.getRestaurantId() != null ? supply.getRestaurantId() : 1L);
         entity.setName(supply.getName());
         entity.setUnitOfMeasure(supply.getUnitOfMeasure());
         entity.setCurrentStock(supply.getCurrentStock());

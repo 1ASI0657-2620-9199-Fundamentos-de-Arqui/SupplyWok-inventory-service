@@ -29,7 +29,9 @@ public class SupplyCommandServiceImpl implements SupplyCommandService {
 
     @Override
     public Optional<Supply> handle(UpdateSupplyCommand command) {
-        var supply = supplyRepository.findById(command.id());
+        var supply = command.restaurantId() != null
+                ? supplyRepository.findByIdAndRestaurantId(command.id(), command.restaurantId())
+                : supplyRepository.findById(command.id());
         if (supply.isEmpty()) {
             return Optional.empty();
         }
@@ -46,7 +48,9 @@ public class SupplyCommandServiceImpl implements SupplyCommandService {
 
     @Override
     public boolean handle(DeleteSupplyCommand command) {
-        var supply = supplyRepository.findById(command.id());
+        var supply = command.restaurantId() != null
+                ? supplyRepository.findByIdAndRestaurantId(command.id(), command.restaurantId())
+                : supplyRepository.findById(command.id());
         if (supply.isEmpty()) {
             return false;
         }

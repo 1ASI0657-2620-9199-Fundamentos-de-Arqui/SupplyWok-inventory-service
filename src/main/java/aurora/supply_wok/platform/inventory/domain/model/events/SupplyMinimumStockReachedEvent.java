@@ -9,14 +9,20 @@ public record SupplyMinimumStockReachedEvent(
         Long supplyId,
         String name,
         int currentStock,
-        int minimumStockLevel
+        int minimumStockLevel,
+        Long restaurantId
 ) {
+    public SupplyMinimumStockReachedEvent(Long supplyId, String name, int currentStock, int minimumStockLevel) {
+        this(supplyId, name, currentStock, minimumStockLevel, 1L);
+    }
+
     public static SupplyMinimumStockReachedEvent from(Supply supply) {
         return new SupplyMinimumStockReachedEvent(
                 supply.getId(),
                 supply.getName(),
                 supply.getCurrentStock(),
-                supply.getMinimumStockLevel()
+                supply.getMinimumStockLevel(),
+                supply.getRestaurantId()
         );
     }
 }

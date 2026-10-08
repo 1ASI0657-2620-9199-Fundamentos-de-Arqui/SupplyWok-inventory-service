@@ -5,6 +5,7 @@ import aurora.supply_wok.platform.inventory.domain.model.commands.CreateSupplyCo
 import aurora.supply_wok.platform.inventory.domain.model.valueobjects.EUnitOfMeasure;
 import aurora.supply_wok.platform.inventory.domain.repositories.SupplyRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,15 @@ import org.springframework.stereotype.Service;
 public class InventoryDatabaseSeeder {
     private final SupplyRepository supplyRepository;
     private final SupplyCommandService supplyCommandService;
+    private final Long restaurantOwnerId;
 
-    public InventoryDatabaseSeeder(SupplyRepository supplyRepository, SupplyCommandService supplyCommandService) {
+    public InventoryDatabaseSeeder(
+            SupplyRepository supplyRepository,
+            SupplyCommandService supplyCommandService,
+            @Value("${supplywok.seed.restaurant-owner-id:1}") Long restaurantOwnerId) {
         this.supplyRepository = supplyRepository;
         this.supplyCommandService = supplyCommandService;
+        this.restaurantOwnerId = restaurantOwnerId;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -26,6 +32,7 @@ public class InventoryDatabaseSeeder {
             log.info("Seeding inventory supplies...");
 
             supplyCommandService.handle(new CreateSupplyCommand(
+                    restaurantOwnerId,
                     "Tomate",
                     EUnitOfMeasure.Kilograms,
                     50,
@@ -34,6 +41,7 @@ public class InventoryDatabaseSeeder {
             ));
 
             supplyCommandService.handle(new CreateSupplyCommand(
+                    restaurantOwnerId,
                     "Cebolla",
                     EUnitOfMeasure.Kilograms,
                     30,

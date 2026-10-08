@@ -6,10 +6,14 @@ import aurora.supply_wok.platform.inventory.domain.model.valueobjects.EUnitOfMea
  * Command to create a new supply item.
  */
 public record CreateSupplyCommand(
+        Long restaurantId,
         String name,
         EUnitOfMeasure unitOfMeasure,
         int currentStock,
         int minimumStockLevel,
         String category
 ) {
+    public CreateSupplyCommand(String name, EUnitOfMeasure unitOfMeasure, int currentStock, int minimumStockLevel, String category) {
+        this(1L, name, unitOfMeasure, currentStock, minimumStockLevel, category);
+    }
 }

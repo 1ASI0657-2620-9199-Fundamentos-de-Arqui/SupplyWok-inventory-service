@@ -20,6 +20,9 @@ public class Supply extends AbstractDomainAggregateRoot<Supply> {
     @Setter
     private Long id;
 
+    @Setter
+    private Long restaurantId;
+
     private String name;
     private EUnitOfMeasure unitOfMeasure;
     private int currentStock;
@@ -27,6 +30,7 @@ public class Supply extends AbstractDomainAggregateRoot<Supply> {
     private String category;
 
     public Supply() {
+        this.restaurantId = 1L;
         this.name = "";
         this.unitOfMeasure = EUnitOfMeasure.Units;
         this.currentStock = 0;
@@ -34,13 +38,14 @@ public class Supply extends AbstractDomainAggregateRoot<Supply> {
         this.category = "";
     }
 
-    public Supply(String name, EUnitOfMeasure unitOfMeasure, int currentStock, int minimumStockLevel, String category) {
+    public Supply(Long restaurantId, String name, EUnitOfMeasure unitOfMeasure, int currentStock, int minimumStockLevel, String category) {
         this();
         validateCoreData(name, minimumStockLevel, category);
         if (currentStock < 0) {
             throw new IllegalArgumentException("Current stock cannot be negative.");
         }
 
+        this.restaurantId = restaurantId != null ? restaurantId : 1L;
         this.name = name.trim();
         this.unitOfMeasure = unitOfMeasure;
         this.currentStock = currentStock;
@@ -48,8 +53,13 @@ public class Supply extends AbstractDomainAggregateRoot<Supply> {
         this.category = category.trim();
     }
 
+    public Supply(String name, EUnitOfMeasure unitOfMeasure, int currentStock, int minimumStockLevel, String category) {
+        this(1L, name, unitOfMeasure, currentStock, minimumStockLevel, category);
+    }
+
     public Supply(CreateSupplyCommand command) {
         this(
+                command.restaurantId(),
                 command.name(),
                 command.unitOfMeasure(),
                 command.currentStock(),

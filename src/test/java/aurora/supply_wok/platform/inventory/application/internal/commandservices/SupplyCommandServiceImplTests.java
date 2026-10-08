@@ -32,7 +32,7 @@ class SupplyCommandServiceImplTests {
     @Test
     void handleCreateSupplyCommand_withValidCommand_savesAndReturnsSupply() {
         // Arrange
-        var command = new CreateSupplyCommand("Noodles", EUnitOfMeasure.Kilograms, 20, 5, "Dry goods");
+        var command = new CreateSupplyCommand(1L, "Noodles", EUnitOfMeasure.Kilograms, 20, 5, "Dry goods");
         var savedSupply = new Supply(command);
         savedSupply.setId(10L);
         when(supplyRepository.save(any(Supply.class))).thenReturn(savedSupply);
@@ -44,18 +44,19 @@ class SupplyCommandServiceImplTests {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(10L);
         assertThat(result.getName()).isEqualTo("Noodles");
+        assertThat(result.getRestaurantId()).isEqualTo(1L);
         verify(supplyRepository).save(any(Supply.class));
     }
 
     @Test
     void handleUpdateSupplyCommand_whenSupplyExists_updatesSavesAndReturnsOptional() {
         // Arrange
-        var existingSupply = new Supply("Noodles", EUnitOfMeasure.Kilograms, 20, 5, "Dry goods");
+        var existingSupply = new Supply(1L, "Noodles", EUnitOfMeasure.Kilograms, 20, 5, "Dry goods");
         existingSupply.setId(1L);
-        when(supplyRepository.findById(1L)).thenReturn(Optional.of(existingSupply));
+        when(supplyRepository.findByIdAndRestaurantId(1L, 1L)).thenReturn(Optional.of(existingSupply));
         when(supplyRepository.save(existingSupply)).thenReturn(existingSupply);
 
-        var updateCommand = new UpdateSupplyCommand(1L, "Egg Noodles", EUnitOfMeasure.Kilograms, 25, 8, "Pasta");
+        var updateCommand = new UpdateSupplyCommand(1L, 1L, "Egg Noodles", EUnitOfMeasure.Kilograms, 25, 8, "Pasta");
 
         // Act
         var result = supplyCommandService.handle(updateCommand);
@@ -84,13 +85,28 @@ class SupplyCommandServiceImplTests {
     }
 
     @Test
+    void handleUpdateSupplyCommand_whenSupplyBelongsToAnotherRestaurant_returnsEmpty() {
+        // Arrange
+        when(supplyRepository.findByIdAndRestaurantId(1L, 2L)).thenReturn(Optional.empty());
+        var updateCommand = new UpdateSupplyCommand(1L, 2L, "Egg Noodles", EUnitOfMeasure.Kilograms, 25, 8, "Pasta");
+
+        // Act
+        var result = supplyCommandService.handle(updateCommand);
+
+        // Assert
+        assertThat(result).isEmpty();
+        verify(supplyRepository).findByIdAndRestaurantId(1L, 2L);
+        verify(supplyRepository, never()).save(any(Supply.class));
+    }
+
+    @Test
     void handleDeleteSupplyCommand_whenSupplyExists_deletesAndReturnsTrue() {
         // Arrange
-        var existingSupply = new Supply("Noodles", EUnitOfMeasure.Kilograms, 20, 5, "Dry goods");
+        var existingSupply = new Supply(1L, "Noodles", EUnitOfMeasure.Kilograms, 20, 5, "Dry goods");
         existingSupply.setId(1L);
-        when(supplyRepository.findById(1L)).thenReturn(Optional.of(existingSupply));
+        when(supplyRepository.findByIdAndRestaurantId(1L, 1L)).thenReturn(Optional.of(existingSupply));
 
-        var deleteCommand = new DeleteSupplyCommand(1L);
+        var deleteCommand = new DeleteSupplyCommand(1L, 1L);
 
         // Act
         var result = supplyCommandService.handle(deleteCommand);
@@ -111,6 +127,21 @@ class SupplyCommandServiceImplTests {
 
         // Assert
         assertThat(result).isFalse();
+        verify(supplyRepository, never()).delete(any(Supply.class));
+    }
+
+    @Test
+    void handleDeleteSupplyCommand_whenSupplyBelongsToAnotherRestaurant_returnsFalse() {
+        // Arrange
+        when(supplyRepository.findByIdAndRestaurantId(1L, 2L)).thenReturn(Optional.empty());
+        var deleteCommand = new DeleteSupplyCommand(1L, 2L);
+
+        // Act
+        var result = supplyCommandService.handle(deleteCommand);
+
+        // Assert
+        assertThat(result).isFalse();
+        verify(supplyRepository).findByIdAndRestaurantId(1L, 2L);
         verify(supplyRepository, never()).delete(any(Supply.class));
     }
 }

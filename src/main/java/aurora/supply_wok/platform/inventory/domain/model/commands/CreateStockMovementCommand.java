@@ -12,6 +12,10 @@ public record CreateStockMovementCommand(
         EMovementType type,
         int amount,
         LocalDateTime date,
-        String reason
+        String reason,
+        Long restaurantId
 ) {
+    public CreateStockMovementCommand(Long supplyId, EMovementType type, int amount, LocalDateTime date, String reason) {
+        this(supplyId, type, amount, date, reason, null);
+    }
 }

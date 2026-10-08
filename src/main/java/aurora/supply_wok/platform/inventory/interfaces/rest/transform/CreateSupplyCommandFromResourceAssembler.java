@@ -12,13 +12,18 @@ public final class CreateSupplyCommandFromResourceAssembler {
     private CreateSupplyCommandFromResourceAssembler() {
     }
 
-    public static CreateSupplyCommand toCommandFromResource(CreateSupplyResource resource) {
+    public static CreateSupplyCommand toCommandFromResource(CreateSupplyResource resource, Long restaurantId) {
         return new CreateSupplyCommand(
+                restaurantId,
                 resource.name(),
                 EUnitOfMeasure.valueOf(resource.unitOfMeasure().trim()),
                 resource.currentStock(),
                 resource.minimumStockLevel(),
                 resource.category()
         );
+    }
+
+    public static CreateSupplyCommand toCommandFromResource(CreateSupplyResource resource) {
+        return toCommandFromResource(resource, 1L);
     }
 }

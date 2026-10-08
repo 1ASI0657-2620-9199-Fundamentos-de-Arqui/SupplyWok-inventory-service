@@ -1,12 +1,15 @@
 package aurora.supply_wok.platform.inventory.interfaces.rest.resources;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Request payload for creating a supply item.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(
         name = "CreateSupplyRequest",
         description = "Request payload for creating a supply item",
@@ -33,6 +36,18 @@ public record CreateSupplyResource(
 
         @NotBlank
         @Schema(description = "Supply category", example = "Grains", minLength = 1, maxLength = 80)
-        String category
+        String category,
+
+        @Nullable
+        Long restaurantId
 ) {
+    public CreateSupplyResource(
+            String name,
+            String unitOfMeasure,
+            int currentStock,
+            int minimumStockLevel,
+            String category
+    ) {
+        this(name, unitOfMeasure, currentStock, minimumStockLevel, category, null);
+    }
 }

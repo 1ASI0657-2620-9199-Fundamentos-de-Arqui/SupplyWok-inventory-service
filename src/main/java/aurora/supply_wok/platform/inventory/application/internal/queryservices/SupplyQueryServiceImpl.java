@@ -25,16 +25,25 @@ public class SupplyQueryServiceImpl implements SupplyQueryService {
 
     @Override
     public List<Supply> handle(GetAllSuppliesQuery query) {
+        if (query.restaurantId() != null) {
+            return supplyRepository.findAllByRestaurantId(query.restaurantId());
+        }
         return supplyRepository.findAll();
     }
 
     @Override
     public Optional<Supply> handle(GetSupplyByIdQuery query) {
+        if (query.restaurantId() != null) {
+            return supplyRepository.findByIdAndRestaurantId(query.supplyId(), query.restaurantId());
+        }
         return supplyRepository.findById(query.supplyId());
     }
 
     @Override
     public long handle(GetTotalSupplyStockQuery query) {
+        if (query.restaurantId() != null) {
+            return supplyRepository.getTotalCurrentStockByRestaurantId(query.restaurantId());
+        }
         return supplyRepository.getTotalCurrentStock();
     }
 }

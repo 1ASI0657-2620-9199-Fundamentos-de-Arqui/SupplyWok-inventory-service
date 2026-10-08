@@ -25,7 +25,7 @@ class SupplyMinimumStockReachedEventHandlerTests {
     @Test
     void on_whenDomainEventReceived_publishesIntegrationEvent() {
         // Arrange
-        var domainEvent = new SupplyMinimumStockReachedEvent(7L, "Soy Sauce", 2, 5);
+        var domainEvent = new SupplyMinimumStockReachedEvent(7L, "Soy Sauce", 2, 5, 12L);
         var captor = ArgumentCaptor.forClass(SupplyMinimumStockReachedIntegrationEvent.class);
 
         // Act
@@ -38,5 +38,6 @@ class SupplyMinimumStockReachedEventHandlerTests {
         assertThat(integrationEvent.name()).isEqualTo("Soy Sauce");
         assertThat(integrationEvent.currentStock()).isEqualTo(2);
         assertThat(integrationEvent.minimumStockLevel()).isEqualTo(5);
+        assertThat(integrationEvent.restaurantId()).isEqualTo(12L);
     }
 }

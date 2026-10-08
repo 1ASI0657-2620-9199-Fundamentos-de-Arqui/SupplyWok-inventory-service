@@ -7,10 +7,21 @@ import aurora.supply_wok.platform.inventory.domain.model.valueobjects.EUnitOfMea
  */
 public record UpdateSupplyCommand(
         Long id,
+        Long restaurantId,
         String name,
         EUnitOfMeasure unitOfMeasure,
         Integer currentStock,
         int minimumStockLevel,
         String category
 ) {
+    public UpdateSupplyCommand(
+            Long id,
+            String name,
+            EUnitOfMeasure unitOfMeasure,
+            Integer currentStock,
+            int minimumStockLevel,
+            String category
+    ) {
+        this(id, null, name, unitOfMeasure, currentStock, minimumStockLevel, category);
+    }
 }

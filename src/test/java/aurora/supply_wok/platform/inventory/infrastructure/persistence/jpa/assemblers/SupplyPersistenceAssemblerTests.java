@@ -14,6 +14,7 @@ class SupplyPersistenceAssemblerTests {
         // Arrange
         var entity = new SupplyPersistenceEntity();
         entity.setId(10L);
+        entity.setRestaurantId(5L);
         entity.setName("Rice Vinegar");
         entity.setUnitOfMeasure(EUnitOfMeasure.Liters);
         entity.setCurrentStock(40);
@@ -25,6 +26,7 @@ class SupplyPersistenceAssemblerTests {
 
         // Assert
         assertThat(supply.getId()).isEqualTo(10L);
+        assertThat(supply.getRestaurantId()).isEqualTo(5L);
         assertThat(supply.getName()).isEqualTo("Rice Vinegar");
         assertThat(supply.getUnitOfMeasure()).isEqualTo(EUnitOfMeasure.Liters);
         assertThat(supply.getCurrentStock()).isEqualTo(40);
@@ -35,7 +37,7 @@ class SupplyPersistenceAssemblerTests {
     @Test
     void toPersistenceFromDomain_withValidDomainModel_mapsAllFieldsCorrectly() {
         // Arrange
-        var supply = new Supply("Dark Soy Sauce", EUnitOfMeasure.Liters, 25, 5, "Sauces");
+        var supply = new Supply(5L, "Dark Soy Sauce", EUnitOfMeasure.Liters, 25, 5, "Sauces");
         supply.setId(22L);
 
         // Act
@@ -43,6 +45,7 @@ class SupplyPersistenceAssemblerTests {
 
         // Assert
         assertThat(entity.getId()).isEqualTo(22L);
+        assertThat(entity.getRestaurantId()).isEqualTo(5L);
         assertThat(entity.getName()).isEqualTo("Dark Soy Sauce");
         assertThat(entity.getUnitOfMeasure()).isEqualTo(EUnitOfMeasure.Liters);
         assertThat(entity.getCurrentStock()).isEqualTo(25);
