@@ -23,6 +23,6 @@ public class MessagingConfiguration {
 
     @Bean
     public MessageConverter messageConverter() {
-        return new JacksonJsonMessageConverter("aurora.supply_wok.platform.*");
+        return new JacksonJsonMessageConverter("aurora.supply_wok.platform.inventory.interfaces.events");
     }
 }
