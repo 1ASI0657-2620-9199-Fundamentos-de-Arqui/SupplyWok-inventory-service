@@ -7,6 +7,7 @@ import aurora.supply_wok.platform.inventory.domain.model.commands.DeleteSupplyCo
 import aurora.supply_wok.platform.inventory.domain.model.commands.UpdateSupplyCommand;
 import aurora.supply_wok.platform.inventory.domain.repositories.SupplyRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
  * Default supply command service implementation.
  */
 @Service
+@Transactional
 public class SupplyCommandServiceImpl implements SupplyCommandService {
 
     private final SupplyRepository supplyRepository;

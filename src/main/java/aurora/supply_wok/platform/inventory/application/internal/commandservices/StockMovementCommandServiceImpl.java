@@ -5,6 +5,7 @@ import aurora.supply_wok.platform.inventory.domain.model.commands.CreateStockMov
 import aurora.supply_wok.platform.inventory.domain.model.entities.StockMovement;
 import aurora.supply_wok.platform.inventory.domain.repositories.SupplyRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import java.util.Optional;
  * Default stock movement command service implementation.
  */
 @Service
+@Transactional
 public class StockMovementCommandServiceImpl implements StockMovementCommandService {
 
     private final SupplyRepository supplyRepository;

@@ -1,33 +1,26 @@
 package aurora.supply_wok.platform.shared.infrastructure.messaging;
 
 import aurora.supply_wok.platform.inventory.interfaces.events.SupplyMinimumStockReachedIntegrationEvent;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.context.event.EventListener;
 
 /**
  * Publishes inventory integration events to RabbitMQ.
  */
 @Component
 @ConditionalOnProperty(name = "supplywok.messaging.enabled", havingValue = "true", matchIfMissing = true)
-@Slf4j
 public class IntegrationEventRabbitPublisher {
 
-    private final RabbitTemplate rabbitTemplate;
+    private final EventOutbox outbox;
 
-    public IntegrationEventRabbitPublisher(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
+    public IntegrationEventRabbitPublisher(EventOutbox outbox) {
+        this.outbox = outbox;
     }
 
-    @TransactionalEventListener(fallbackExecution = true)
+    @EventListener
     public void handle(SupplyMinimumStockReachedIntegrationEvent event) {
-        log.info("Publishing SupplyMinimumStockReachedIntegrationEvent to RabbitMQ: {}", event);
-        rabbitTemplate.convertAndSend(
-                MessagingConfiguration.EXCHANGE_NAME,
-                "inventory.supply.minimum-stock-reached",
-                event
-        );
+        outbox.enqueue("inventory.supply.minimum-stock-reached", event);
     }
 }

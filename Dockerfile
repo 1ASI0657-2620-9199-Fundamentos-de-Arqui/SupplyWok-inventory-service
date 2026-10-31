@@ -8,6 +8,7 @@ COPY src ./src
 RUN mvn -B -DskipTests package
 
 FROM eclipse-temurin:26-jre-noble AS runtime
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 ENV SPRING_PROFILES_ACTIVE=prod
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
